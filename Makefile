@@ -2,6 +2,8 @@
 # PROJECT_NAME defaults to name of the current directory.
 PROJECT_NAME							:= $(notdir $(PWD))
 export PROJECT_NAME
+PROJECT_ROOT							:= $(HOME)/$(PROJECT_NAME)
+export PROJECT_ROOT
 
 ifeq ($(builddir),)
 BUILDDIR								:= gitian-building
@@ -79,6 +81,7 @@ report:
 	@echo '      args:'
 	@echo '        - PWD=${PWD}'
 	@echo '        - PROJECT_NAME=${PROJECT_NAME}'
+	@echo '        - PROJECT_ROOT=${PROJECT_ROOT}'
 	@echo '        - BUILDDIR=${BUILDDIR}'
 	@echo '        - GITHUB_USER_NAME=${GITHUB_USER_NAME}'
 	@echo '        - GIT_USER_EMAIL=${GIT_USER_EMAIL}'
@@ -120,15 +123,15 @@ init:
 #endif
 
 	echo 0
-	$(shell [ ! -d '${PWD}/${BUILDDIR}' ]										&& mkdir -p ${PWD}/${BUILDDIR})
+	$(shell [ ! -d '${PROJECT_ROOT}/${BUILDDIR}' ]                             && mkdir -p ${PROJECT_ROOT}/${BUILDDIR})
 	echo 1
-	$(shell [ ! -d '${PWD}/${BUILDDIR}/gitian.sigs' ]							&& git clone --depth ${GIT_CLONE_DEPTH} git@github.com:${GITHUB_USER_NAME}/gitian.sigs.git ${PWD}/${BUILDDIR}/gitian.sigs)
+	$(shell [ ! -d '${PROJECT_ROOT}/${BUILDDIR}/gitian.sigs' ]                 && git clone --depth ${GIT_CLONE_DEPTH} git@github.com:${GITHUB_USER_NAME}/gitian.sigs.git ${PWD}/${BUILDDIR}/gitian.sigs)
 	echo 2
-	$(shell [ ! -d '${PWD}/${BUILDDIR}/bitcoin' ]								&& git clone --depth ${GIT_CLONE_DEPTH} https://github.com/bitcoin/bitcoin.git ${PWD}/${BUILDDIR}/bitcoin)
+	$(shell [ ! -d '${PROJECT_ROOT}/${BUILDDIR}/bitcoin' ]                     && git clone --depth ${GIT_CLONE_DEPTH} https://github.com/bitcoin/bitcoin.git ${PWD}/${BUILDDIR}/bitcoin)
 	echo 3
-	$(shell [ ! -d '${PWD}/${BUILDDIR}/gitian-builder' ]						&& git clone --depth ${GIT_CLONE_DEPTH} https://github.com/devrandom/gitian-builder.git ${PWD}/${BUILDDIR}/gitian-builder)
+	$(shell [ ! -d '${PROJECT_ROOT}/${BUILDDIR}/gitian-builder' ]              && git clone --depth ${GIT_CLONE_DEPTH} https://github.com/devrandom/gitian-builder.git ${PWD}/${BUILDDIR}/gitian-builder)
 	echo 4
-	$(shell [ ! -d '${PWD}/${BUILDDIR}/bitcoin-detached-sigs' ]					&& git clone --depth ${GIT_CLONE_DEPTH} https://github.com/bitcoin-core/bitcoin-detached-sigs.git ${PWD}/${BUILDDIR}/bitcoin-detached-sigs)
+	$(shell [ ! -d '${PROJECT_ROOT}/${BUILDDIR}/bitcoin-detached-sigs' ]       && git clone --depth ${GIT_CLONE_DEPTH} https://github.com/bitcoin-core/bitcoin-detached-sigs.git ${PWD}/${BUILDDIR}/bitcoin-detached-sigs)
 	echo 5
 
 .PHONY: depends
@@ -141,19 +144,19 @@ depends: report
 #endif
 
 	echo 0
-	cd ${PWD}/${BUILDDIR}/gitian-builder && make -C ../bitcoin/depends download SOURCES_PATH=${PWD}/cache/common
+	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && make -C ../bitcoin/depends download SOURCES_PATH=${PWD}/cache/common
 	echo 1
-	cd ${PWD}/${BUILDDIR}/gitian-builder && mkdir -p ${PWD}/${BUILDDIR}/gitian-builder/inputs && wget -P ${PWD}/${BUILDDIR}/gitian-builder/inputs https://bitcoincore.org/cfields/osslsigncode-Backports-to-1.7.1.patch
+	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && mkdir -p ${PWD}/${BUILDDIR}/gitian-builder/inputs && wget -P ${PWD}/${BUILDDIR}/gitian-builder/inputs https://bitcoincore.org/cfields/osslsigncode-Backports-to-1.7.1.patch
 	echo 2
-	cd ${PWD}/${BUILDDIR}/gitian-builder && mkdir -p ${PWD}/${BUILDDIR}/gitian-builder/inputs && wget -O inputs/osslsigncode-2.0.tar.gz https://github.com/mtrojnar/osslsigncode/archive/2.0.tar.gz
+	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && mkdir -p ${PWD}/${BUILDDIR}/gitian-builder/inputs && wget -O inputs/osslsigncode-2.0.tar.gz https://github.com/mtrojnar/osslsigncode/archive/2.0.tar.gz
 	echo 3
-	cd ${PWD}/${BUILDDIR}/gitian-builder && mkdir -p ${PWD}/${BUILDDIR}/gitian-builder/inputs && wget -P ${PWD}/${BUILDDIR}/gitian-builder/inputs https://github.com/bitcoin/bitcoin/files/6175295/osslsigncode-1.7.1.tar.gz
+	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && mkdir -p ${PWD}/${BUILDDIR}/gitian-builder/inputs && wget -P ${PWD}/${BUILDDIR}/gitian-builder/inputs https://github.com/bitcoin/bitcoin/files/6175295/osslsigncode-1.7.1.tar.gz
 	echo 4
-	cd ${PWD}/${BUILDDIR}/gitian-builder && mkdir -p ${PWD}/${BUILDDIR}/gitian-builder/inputs && [ ! -d '${PWD}/${BUILDDIR}/gitian-builder/inputs/MacOSX10.14.sdk.tar.gz' ] && wget -P ${PWD}/${BUILDDIR}/gitian-builder/inputs  https://bitcoincore.org/depends-sources/sdks/MacOSX10.14.sdk.tar.gz
+	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && mkdir -p ${PWD}/${BUILDDIR}/gitian-builder/inputs && [ ! -d '${PWD}/${BUILDDIR}/gitian-builder/inputs/MacOSX10.14.sdk.tar.gz' ] && wget -P ${PWD}/${BUILDDIR}/gitian-builder/inputs  https://bitcoincore.org/depends-sources/sdks/MacOSX10.14.sdk.tar.gz
 	echo 5
-	cd ${PWD}/${BUILDDIR}/gitian-builder && mkdir -p ${PWD}/${BUILDDIR}/gitian-builder/inputs && [ ! -d '${PWD}/${BUILDDIR}/gitian-builder/inputs/MacOSX10.11.sdk.tar.gz' ] && wget -P ${PWD}/${BUILDDIR}/gitian-builder/inputs  https://bitcoincore.org/depends-sources/sdks/MacOSX10.11.sdk.tar.gz
+	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && mkdir -p ${PWD}/${BUILDDIR}/gitian-builder/inputs && [ ! -d '${PWD}/${BUILDDIR}/gitian-builder/inputs/MacOSX10.11.sdk.tar.gz' ] && wget -P ${PWD}/${BUILDDIR}/gitian-builder/inputs  https://bitcoincore.org/depends-sources/sdks/MacOSX10.11.sdk.tar.gz
 	echo 6
-	cd ${PWD}/${BUILDDIR}/gitian-builder && mkdir -p ${PWD}/${BUILDDIR}/gitian-builder/inputs && wget -P ${PWD}/${BUILDDIR}/gitian-builder/inputs https://github.com/bitcoin/bitcoin/files/6175295/osslsigncode-1.7.1.tar.gz
+	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && mkdir -p ${PWD}/${BUILDDIR}/gitian-builder/inputs && wget -P ${PWD}/${BUILDDIR}/gitian-builder/inputs https://github.com/bitcoin/bitcoin/files/6175295/osslsigncode-1.7.1.tar.gz
 	echo 7
 	$(shell sudo ufw allow 3142/tcp && ufw reload)
 	echo 8
