@@ -69,7 +69,7 @@ if [[ "$OSTYPE" == "linux"* ]]; then
             echo 'Using apt...'
             $INSTALL $AWK
             #$INSTALL git apache2 apt-cacher-ng python-vm-builder ruby qemu-utils coreutils
-            $INSTALL git apache2 apt-cacher-ng ruby qemu-utils coreutils
+            $INSTALL git apache2 apt-cacher-ng ruby qemu-utils coreutils mingw-w64
         fi
     fi
     if [[ "$OSTYPE" == "linux-musl" ]]; then
