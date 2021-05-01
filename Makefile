@@ -122,21 +122,15 @@ init:
 #	sudo make init
 #endif
 
-	echo 0
-	$(shell [ ! -d '${PROJECT_ROOT}/${BUILDDIR}' ]                             && mkdir -p ${PROJECT_ROOT}/${BUILDDIR})
-	echo 1
+	$(shell [ ! -d '${PROJECT_ROOT}/${BUILDDIR}' ]                             && mkdir -p ${PROJECT_ROOT}/${BUILDDIR}) 
 	$(shell [ ! -d '${PROJECT_ROOT}/${BUILDDIR}/gitian.sigs' ]                 && git clone --depth ${GIT_CLONE_DEPTH} \
-		git@github.com:${GITHUB_USER_NAME}/gitian.sigs.git ${PWD}/${BUILDDIR}/gitian.sigs)
-	echo 2
+		git@github.com:${GITHUB_USER_NAME}/gitian.sigs.git                     ${PROJECT_ROOT}/${BUILDDIR}/gitian.sigs)
 	$(shell [ ! -d '${PROJECT_ROOT}/${BUILDDIR}/bitcoin' ]                     && git clone --depth ${GIT_CLONE_DEPTH} \
-		https://github.com/bitcoin/bitcoin.git ${PWD}/${BUILDDIR}/bitcoin)
-	echo 3
+		https://github.com/bitcoin/bitcoin.git                                 ${PROJECT_ROOT}/${BUILDDIR}/bitcoin)
 	$(shell [ ! -d '${PROJECT_ROOT}/${BUILDDIR}/gitian-builder' ]              && git clone --depth ${GIT_CLONE_DEPTH} \
-		https://github.com/devrandom/gitian-builder.git ${PWD}/${BUILDDIR}/gitian-builder)
-	echo 4
+		https://github.com/devrandom/gitian-builder.git                        ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder)
 	$(shell [ ! -d '${PROJECT_ROOT}/${BUILDDIR}/bitcoin-detached-sigs' ]       && git clone --depth ${GIT_CLONE_DEPTH} \
-		https://github.com/bitcoin-core/bitcoin-detached-sigs.git ${PWD}/${BUILDDIR}/bitcoin-detached-sigs)
-	echo 5
+		https://github.com/bitcoin-core/bitcoin-detached-sigs.git              ${PWD}/${BUILDDIR}/bitcoin-detached-sigs)
 
 .PHONY: depends
 .ONESHELL:
