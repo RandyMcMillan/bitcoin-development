@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+
 #ENV VARS
 OS=$(uname)
 OS_VERSION=$(uname -r)
@@ -10,16 +11,23 @@ export UNAME_M
 export ARCH
 
 report() {
-echo OS:
-echo "$OS" | awk '{print tolower($0)}'
+if hash mawk 2>/dev/null; then
+    AWK=mawk
+    export $AWK
+fi
+
+echo $OS
+echo "$OS" | $AWK '{print tolower($0)}' && echo
 echo OS_VERSION:
-echo "$OS_VERSION" | awk '{print tolower($0)}'
+echo "$OS_VERSION" | $AWK '{print tolower($0)}' && echo
 echo UNAME_M:
-echo "$UNAME_M" | awk '{print tolower($0)}'
+echo "$UNAME_M" | $AWK '{print tolower($0)}' && echo
 echo ARCH:
-echo "$ARCH" | awk '{print tolower($0)}'
+echo "$ARCH" | $AWK '{print tolower($0)}' && echo
 echo OSTYPE:
-echo "$OSTYPE" | awk '{print tolower($0)}'
+echo "$OSTYPE" | $AWK '{print tolower($0)}' && echo
+echo
+echo "\n----------------------------------end report-------------------------------"
 }
 
 checkbrew() {
@@ -55,32 +63,41 @@ if [[ "$OSTYPE" == "linux"* ]]; then
     #CHECK APT
     if [[ "$OSTYPE" == "linux-gnu" ]]; then
         if hash apt 2>/dev/null; then
-            apt install awk
-            apt install apt-cacher-ng coreutils ruby
+            INSTALL='apt install'
+            export INSTALL
             report
             echo 'Using apt...'
+            $INSTALL $AWK
+            #$INSTALL git apache2 apt-cacher-ng python-vm-builder ruby qemu-utils coreutils
+            $INSTALL git apache2 apt-cacher-ng ruby qemu-utils coreutils
         fi
     fi
     if [[ "$OSTYPE" == "linux-musl" ]]; then
+    INSTALL=apk add
+    export INSTALL
         if hash apk 2>/dev/null; then
-            apk add awk
+            $INSTALL awk
             report
             echo 'Using apk...'
         fi
     fi
-#    if [[ "$OSTYPE" == "linux-arm"* ]]; then
-#        checkraspi
-#        if hash apt 2>/dev/null; then
-#            apt install awk
-#            report
-#            echo 'Using apt...'
-#        fi
-#    fi
+    if [[ "$OSTYPE" == "linux-arm"* ]]; then
+    INSTALL=apt install
+    export INSTALL
+    checkraspi
+        if hash apt 2>/dev/null; then
+            apt install awk
+            report
+            echo 'Using apt...'
+        fi
+    fi
 elif [[ "$OSTYPE" == "darwin"* ]]; then
+    INSTALL=brew install
+    export INSTALL
     checkbrew
     if [ ! hash sha256sum 2>/dev/null ]; then
         echo sha256sum
-        brew install coreutils
+        $INSTALL coreutils
         ln -s /usr/local/bin/gsha256sum /usr/local/bin/sha256sum
     else
         which sha256sum
@@ -130,15 +147,19 @@ elif [[ "$OSTYPE" == "darwin"* ]]; then
     else
         which ruby
     fi
-    #if [ ! hash x86-64-w64-mingw32-gcc 2>/dev/null ]; then
-        brew tap coso0920/minw_w64
-        brew install cosmo0920/mingw_w64/x86-64-w64-mingw32-binutils
-        brew install cosmo0920/mingw_w64/x86-64-w64-mingw32-gcc
-        brew install cosmo0920/mingw_w64/i686-w64-mingw32-binutils
-        brew install cosmo0920/mingw_w64/i686-w64-mingw32-gcc
-    #fi
+    ###if [ ! hash x86-64-w64-mingw32-gcc 2>/dev/null ]; then
+    ##    brew tap coso0920/minw_w64
+    ##    brew install cosmo0920/mingw_w64/x86-64-w64-mingw32-binutils
+    ##    brew install cosmo0920/mingw_w64/x86-64-w64-mingw32-gcc
+    ##    brew install cosmo0920/mingw_w64/i686-w64-mingw32-binutils
+    ##    brew install cosmo0920/mingw_w64/i686-w64-mingw32-gcc
+    ###fi
     if [ ! hash docker 2>/dev/null ]; then
         brew cask install docker && brew link docker
+    fi
+    if [ ! hash nmap 2>/dev/null ]; then
+        brew cask install nmap
+        nmap -p 3142 localhost
     fi
 elif [[ "$OSTYPE" == "cygwin" ]]; then
     echo TODO add support for $OSTYPE
@@ -168,4 +189,6 @@ install-macports(){
 
 
 }
+if [[ "$OSTYPE" == "darwin"* ]]; then
 install-macports
+fi
