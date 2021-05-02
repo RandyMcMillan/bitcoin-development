@@ -125,15 +125,15 @@ init:
 	$(shell [ ! -d '${PROJECT_ROOT}/${BUILDDIR}' ]                             && mkdir -p ${PROJECT_ROOT}/${BUILDDIR}) 
 	$(shell [ ! -d '${PROJECT_ROOT}/${BUILDDIR}/gitian.sigs' ]                 && git clone --depth ${GIT_CLONE_DEPTH} \
 		git@github.com:${GITHUB_USER_NAME}/gitian.sigs.git                     ${PROJECT_ROOT}/${BUILDDIR}/gitian.sigs)
-	$(shell [ ! -d '${PROJECT_ROOT}/${BUILDDIR}/bitcoin' ]                     && git clone --depth ${GIT_CLONE_DEPTH} \
-		https://github.com/bitcoin/bitcoin.git                                 ${PROJECT_ROOT}/${BUILDDIR}/bitcoin)
 	$(shell [ ! -d '${PROJECT_ROOT}/${BUILDDIR}/gitian-builder' ]              && git clone --depth ${GIT_CLONE_DEPTH} \
 		https://github.com/devrandom/gitian-builder.git                        ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder)
 	$(shell [ ! -d '${PROJECT_ROOT}/${BUILDDIR}/bitcoin-detached-sigs' ]       && git clone --depth ${GIT_CLONE_DEPTH} \
 		https://github.com/bitcoin-core/bitcoin-detached-sigs.git              ${PWD}/${BUILDDIR}/bitcoin-detached-sigs)
+	$(shell [ ! -d '${project_root}/${builddir}/bitcoin' ]                     && git clone --depth ${git_clone_depth} \
+		https://github.com/bitcoin/bitcoin.git                                 ${project_root}/${builddir}/bitcoin)
 
 .PHONY: depends
-.ONESHELL:
+##.ONESHELL:
 depends:
 
 #ifneq ($(shell id -u),0)
@@ -147,10 +147,12 @@ depends:
 		mkdir -p ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder/inputs && \
 		wget -P ${PWD}/${BUILDDIR}/gitian-builder/inputs \
 		https://bitcoincore.org/cfields/osslsigncode-Backports-to-1.7.1.patch
+
 	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && \
 		mkdir -p ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder/inputs && \
 		wget -O inputs/osslsigncode-2.0.tar.gz \
 		https://github.com/mtrojnar/osslsigncode/archive/2.0.tar.gz
+
 	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && \
 		mkdir -p ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder/inputs && \
 		wget -P ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder/inputs \
