@@ -134,40 +134,56 @@ init:
 
 .PHONY: depends
 .ONESHELL:
-depends: report
+depends:
 
 #ifneq ($(shell id -u),0)
 #	echo "not root"
 #	sudo make depends
 #endif
 
-	echo 0
-	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && make -C ../bitcoin/depends download SOURCES_PATH=${PWD}/cache/common
-	echo 1
-	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && mkdir -p ${PWD}/${BUILDDIR}/gitian-builder/inputs && wget -P ${PWD}/${BUILDDIR}/gitian-builder/inputs https://bitcoincore.org/cfields/osslsigncode-Backports-to-1.7.1.patch
-	echo 2
-	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && mkdir -p ${PWD}/${BUILDDIR}/gitian-builder/inputs && wget -O inputs/osslsigncode-2.0.tar.gz https://github.com/mtrojnar/osslsigncode/archive/2.0.tar.gz
-	echo 3
-	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && mkdir -p ${PWD}/${BUILDDIR}/gitian-builder/inputs && wget -P ${PWD}/${BUILDDIR}/gitian-builder/inputs https://github.com/bitcoin/bitcoin/files/6175295/osslsigncode-1.7.1.tar.gz
-	echo 4
-	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && mkdir -p ${PWD}/${BUILDDIR}/gitian-builder/inputs && [ ! -d '${PWD}/${BUILDDIR}/gitian-builder/inputs/MacOSX10.14.sdk.tar.gz' ] && wget -P ${PWD}/${BUILDDIR}/gitian-builder/inputs  https://bitcoincore.org/depends-sources/sdks/MacOSX10.14.sdk.tar.gz
-	echo 5
-	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && mkdir -p ${PWD}/${BUILDDIR}/gitian-builder/inputs && [ ! -d '${PWD}/${BUILDDIR}/gitian-builder/inputs/MacOSX10.11.sdk.tar.gz' ] && wget -P ${PWD}/${BUILDDIR}/gitian-builder/inputs  https://bitcoincore.org/depends-sources/sdks/MacOSX10.11.sdk.tar.gz
-	echo 6
-	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && mkdir -p ${PWD}/${BUILDDIR}/gitian-builder/inputs && wget -P ${PWD}/${BUILDDIR}/gitian-builder/inputs https://github.com/bitcoin/bitcoin/files/6175295/osslsigncode-1.7.1.tar.gz
-	echo 7
+	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && \
+		make -C ../bitcoin/depends download SOURCES_PATH=${PROJECT_ROOT}/${BUILDDIR}/gitian-builder/cache/common
+	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && \
+		mkdir -p ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder/inputs && \
+		wget -P ${PWD}/${BUILDDIR}/gitian-builder/inputs \
+		https://bitcoincore.org/cfields/osslsigncode-Backports-to-1.7.1.patch
+	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && \
+		mkdir -p ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder/inputs && \
+		wget -O inputs/osslsigncode-2.0.tar.gz \
+		https://github.com/mtrojnar/osslsigncode/archive/2.0.tar.gz
+	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && \
+		mkdir -p ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder/inputs && \
+		wget -P ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder/inputs \
+		https://github.com/bitcoin/bitcoin/files/6175295/osslsigncode-1.7.1.tar.gz
+	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && \
+		mkdir -p ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder/inputs && \
+		[ ! -d '${PROJECT_ROOT}/${BUILDDIR}/gitian-builder/inputs/MacOSX10.14.sdk.tar.gz' ] && \
+		wget -P ${PWD}/${BUILDDIR}/gitian-builder/inputs \
+		https://bitcoincore.org/depends-sources/sdks/MacOSX10.14.sdk.tar.gz
+	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && \
+		mkdir -p ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder/inputs && \
+		[ ! -d '${PROJECT_ROOT}/${BUILDDIR}/gitian-builder/inputs/MacOSX10.11.sdk.tar.gz' ] && \
+		wget -P ${PWD}/${BUILDDIR}/gitian-builder/inputs \
+		https://bitcoincore.org/depends-sources/sdks/MacOSX10.11.sdk.tar.gz
+	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && \
+		mkdir -p ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder/inputs && \
+		wget -P ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder/inputs \
+		https://github.com/bitcoin/bitcoin/files/6175295/osslsigncode-1.7.1.tar.gz
 	$(shell sudo ufw allow 3142/tcp && ufw reload)
-	echo 8
-	cd ${PWD}/${BUILDDIR}/gitian-builder && git pull && bin/make-base-vm --suite bionic --arch amd64 --docker
-	echo 9
-	cd ${PWD}/${BUILDDIR}/gitian-builder && wget -P ${PWD}/${BUILDDIR}/gitian-builder/inputs https://bitcoincore.org/cfields/osslsigncode-Backports-to-1.7.1.patch
-	echo 10
-	cd ${PWD}/${BUILDDIR}/gitian-builder && wget -P ${PWD}/${BUILDDIR}/gitian-builder/inputs https://github.com/mtrojnar/osslsigncode/archive/2.0.tar.gz)
-	echo 11
-	cd ${PWD}/${BUILDDIR}/gitian-builder && wget -P ${PWD}/${BUILDDIR}/gitian-builder/inputs https://github.com/bitcoin/bitcoin/files/6175295/osslsigncode-1.7.1.tar.gz)
-	echo 12
-	cd ${PWD}/${BUILDDIR}/gitian-builder && wget -P ${PWD}/${BUILDDIR}/gitian-builder/inputs https://bitcoincore.org/depends-sources/sdks/Xcode-11.3.1-11C505-extracted-SDK-with-libcxx-headers.tar.gz)
-	echo 13
+	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && \
+		git pull && bin/make-base-vm --suite bionic --arch amd64 --docker
+	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && \
+		wget -P ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder/inputs \
+		https://bitcoincore.org/cfields/osslsigncode-Backports-to-1.7.1.patch
+	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && \
+		wget -P ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder/inputs \
+		https://github.com/mtrojnar/osslsigncode/archive/2.0.tar.gz)
+	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && \
+		wget -P ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder/inputs \
+		https://github.com/bitcoin/bitcoin/files/6175295/osslsigncode-1.7.1.tar.gz)
+	cd ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder && \
+		wget -P ${PROJECT_ROOT}/${BUILDDIR}/gitian-builder/inputs \
+		https://bitcoincore.org/depends-sources/sdks/Xcode-11.3.1-11C505-extracted-SDK-with-libcxx-headers.tar.gz
 
 .PHONY: macports-mojave
 macports-mojave:
